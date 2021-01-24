@@ -419,6 +419,28 @@ public class XMLTest {
         Util.compareActualVsExpectedJsonObjects(finalJsonObject,expectedJsonObject);
     }
 
+    @Test
+    public void shouldHandleKeypath() {
+        String xmlStr =
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                        "<addresses xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"" +
+                        "   xsi:noNamespaceSchemaLocation='test.xsd'>\n" +
+                        "   <address>\n" +
+                        "       <name>[CDATA[Joe &amp; T &gt; e &lt; s &quot; t &apos; er]]</name>\n" +
+                        "       <street>Baker street 5</street>\n" +
+                        "       <ArrayOfNum>1, 2, 3, 4.1, 5.2</ArrayOfNum>\n" +
+                        "   </address>\n" +
+                        "</addresses>";
+        String keypath =
+                "/addresses/address";
+        String expectedStr =
+                "{\"street\":\"Baker street 5\"," +
+                        "\"name\":\"[CDATA[Joe & T > e < s \\\" t \\\' er]]\"," +
+                        "\"ArrayOfNum\":\"1, 2, 3, 4.1, 5.2\"\n" +
+                        "}";
+        compareReaderToJSONObject_Keypath(xmlStr,expectedStr,keypath);
+    }
+
     /**
      * Converting a JSON doc containing '>' content to JSONObject, then
      * XML.toString() should result in valid XML.
@@ -773,6 +795,13 @@ public class XMLTest {
         JSONObject expectedJsonObject = new JSONObject(expectedStr);
         Reader reader = new StringReader(xmlStr);
         JSONObject jsonObject = XML.toJSONObject(reader);
+        Util.compareActualVsExpectedJsonObjects(jsonObject,expectedJsonObject);
+    }
+
+    private void compareReaderToJSONObject_Keypath(String xmlStr, String expectedStr, String keypath) {
+        JSONObject expectedJsonObject = new JSONObject(expectedStr);
+        Reader reader = new StringReader(xmlStr);
+        JSONObject jsonObject = XML.toJSONObject(reader, keypath);
         Util.compareActualVsExpectedJsonObjects(jsonObject,expectedJsonObject);
     }
 

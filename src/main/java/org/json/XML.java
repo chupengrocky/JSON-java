@@ -658,13 +658,12 @@ public class XML {
         }
         return jo;
     }
-    public static JSONObject toJSONObject(JSONObject inputJSON, String keypath) throws JSONException {
-        JSONObject res = new JSONObject();
+    public static JSONObject toJSONObject(Reader reader, String keypath) throws JSONException {
+        JSONObject res = toJSONObject(reader);
         JSONPointer pointer = new JSONPointer(keypath);
-        String result = inputJSON.query(pointer).toString();
+        String result = res.query(pointer).toString();
         System.out.println("File contains the Keypath: " + pointer.toString());
-        res = new JSONObject(result);
-        return res;
+        return new JSONObject(result);
     }
 
     public static JSONObject toJSONObject(Reader reader, JSONPointer path, JSONObject replacement) throws JSONException {
