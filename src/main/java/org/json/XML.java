@@ -696,7 +696,12 @@ public class XML {
                     }
                 }
             } else {
-                result.put(key, replaceJSON);
+                if (keyPathArray[0].equals(key)) {
+                    result.put(key, replaceJSON);
+                } else {
+                    Object value = object.get(key);
+                    result.put(key, value);
+                }
             }
         });
         return result;
