@@ -445,7 +445,7 @@ public class XML {
         }
     }
 
-    private static boolean parse_revise(XMLTokener x, JSONObject context, String name, XMLParserConfiguration config, JSONPointer pointer)
+    private static boolean parseHelper(XMLTokener x, JSONObject context, String name, XMLParserConfiguration config, JSONPointer pointer)
             throws JSONException {
         char c;
         int i;
@@ -604,13 +604,15 @@ public class XML {
 
                         } else if (token == LT) {
                             // Nested element
+                            boolean notReadAll = pointer.queryFrom(context) != null && context!= null;
                             if (parse(x, jsonObject, tagName, config)) {
                                 if (jsonObject.length() == 0) {
                                     context.accumulate(tagName, "");
                                 } else if (jsonObject.length() == 1
                                         && jsonObject.opt(config.getcDataTagName()) != null) {
                                     context.accumulate(tagName, jsonObject.opt(config.getcDataTagName()));
-                                } else if (pointer.queryFrom(context) != null) {
+                                } else if (notReadAll) {
+                                    context.accumulate(tagName, jsonObject);
                                     System.out.println("Already found the path! Stop the process");
                                     throw x.syntaxError("Found tag");
                                 } else {
@@ -853,7 +855,7 @@ public class XML {
         return jo;
     }
 
-    public static JSONObject toJSONObject(Reader reader, JSONPointer path) throws JSONException {
+    public static JSONObject toJSONObjectHelper(Reader reader, XMLParserConfiguration config, JSONPointer path) throws JSONException {
         JSONObject jo = new JSONObject();
         XMLTokener x = new XMLTokener(reader);
         while (x.more()) {
@@ -861,7 +863,7 @@ public class XML {
             if (x.more()) {
                 // XMLTokener x, JSONObject context, String name, XMLParserConfiguration config, JSONPointer pointer
                 try {
-                    parse_revise(x, jo, null, XMLParserConfiguration.ORIGINAL, path);
+                    parseHelper(x, jo, null, config, path);
                 } catch (Exception e) {
                     System.out.println(e);
                 }
@@ -870,6 +872,14 @@ public class XML {
         return jo;
     }
 
+    public static JSONObject toJSONObject(Reader reader, JSONPointer path) throws JSONException {
+        JSONObject res = toJSONObjectHelper(reader, XMLParserConfiguration.ORIGINAL, path);
+        String result = res.query(path).toString();
+        System.out.println("File contains the Keypath: " + path.toString());
+        return new JSONObject(result);
+    }
+
+//    // Original Implementation
 //    public static JSONObject toJSONObject(Reader reader, JSONPointer keypath) throws JSONException {
 //        JSONObject res = toJSONObject(reader);
 //        String result = res.query(keypath).toString();
