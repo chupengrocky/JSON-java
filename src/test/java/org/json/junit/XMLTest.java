@@ -827,8 +827,11 @@ public class XMLTest {
         Reader reader = new StringReader(xmlStr);
         JSONObject Jsonreplacer = new JSONObject(replacer);
         JSONPointer keyPointer = new JSONPointer(keypath);
+
         JSONObject jsonObject = XML.toJSONObject(reader, keyPointer, Jsonreplacer);
+
         JSONObject expectedJsonObject = new JSONObject(expectedStr);
+
         Util.compareActualVsExpectedJsonObjects(jsonObject, expectedJsonObject);
     }
 
