@@ -345,7 +345,7 @@ public class XML {
             return true;
 
         } else if (token instanceof Character) {
-            throw x.yntaxError("Misshaped tag");
+            throw x.syntaxError("Misshaped tag");
 
             // Open tag <
 
