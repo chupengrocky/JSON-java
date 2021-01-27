@@ -425,13 +425,14 @@ public class XMLTest {
                         "       <ArrayOfNum>1, 2, 3, 4.1, 5.2</ArrayOfNum>\n" +
                         "   </address>\n" +
                         "</addresses>";
-        String keypath =
-                "/addresses/address";
+        JSONPointer keypath = new JSONPointer("/addresses/address");
+
         String expectedStr =
                 "{\"street\":\"Baker street 5\"," +
                         "\"name\":\"[CDATA[Joe & T > e < s \\\" t \\\' er]]\"," +
                         "\"ArrayOfNum\":\"1, 2, 3, 4.1, 5.2\"\n" +
                         "}";
+
         compareReaderToJSONObject_Keypath(xmlStr, expectedStr, keypath);
     }
 
@@ -816,7 +817,7 @@ public class XMLTest {
         Util.compareActualVsExpectedJsonObjects(jsonObject, expectedJsonObject);
     }
 
-    private void compareReaderToJSONObject_Keypath(String xmlStr, String expectedStr, String keypath) {
+    private void compareReaderToJSONObject_Keypath(String xmlStr, String expectedStr, JSONPointer keypath) {
         JSONObject expectedJsonObject = new JSONObject(expectedStr);
         Reader reader = new StringReader(xmlStr);
         JSONObject jsonObject = XML.toJSONObject(reader, keypath);

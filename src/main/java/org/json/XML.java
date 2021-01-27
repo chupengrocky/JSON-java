@@ -870,13 +870,12 @@ public class XML {
         return jo;
     }
 
-    public static JSONObject toJSONObject(Reader reader, String keypath) throws JSONException {
-        JSONObject res = toJSONObject(reader);
-        JSONPointer pointer = new JSONPointer(keypath);
-        String result = res.query(pointer).toString();
-        System.out.println("File contains the Keypath: " + pointer.toString());
-        return new JSONObject(result);
-    }
+//    public static JSONObject toJSONObject(Reader reader, JSONPointer keypath) throws JSONException {
+//        JSONObject res = toJSONObject(reader);
+//        String result = res.query(keypath).toString();
+//        System.out.println("File contains the Keypath: " + keypath.toString());
+//        return new JSONObject(result);
+//    }
 
     public static JSONObject toJSONObject(Reader reader, JSONPointer path, JSONObject replacement) throws JSONException {
         JSONObject originalJSON = toJSONObject(reader);
