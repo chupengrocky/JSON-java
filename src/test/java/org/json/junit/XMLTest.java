@@ -414,6 +414,44 @@ public class XMLTest {
     }
 
     @Test
+    public void shouldHandleAddTagName() {
+        String tagAdd = "swe262_";
+        class addTransformer implements XML.YOURTYPEHERE {
+            @Override
+            public String run(String input){
+                return tagAdd + input;
+            }
+        }
+
+        String xmlStr =
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                        "<addresses xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"" +
+                        "   xsi:noNamespaceSchemaLocation='test.xsd'>\n" +
+                        "   <address>\n" +
+                        "       <name>[CDATA[Joe &amp; T &gt; e &lt; s &quot; t &apos; er]]</name>\n" +
+                        "       <street>Baker street 5</street>\n" +
+                        "       <ArrayOfNum>1, 2, 3, 4.1, 5.2</ArrayOfNum>\n" +
+                        "   </address>\n" +
+                        "</addresses>";
+
+        String expectedStr =
+                "{\"swe262_addresses\":{\"swe262_address\":{\"swe262_street\":\"Baker street 5\"," +
+                        "\"swe262_name\":\"[CDATA[Joe & T > e < s \\\" t \\\' er]]\"," +
+                        "\"swe262_ArrayOfNum\":\"1, 2, 3, 4.1, 5.2\"\n" +
+                        "},\"swe262_xsi:noNamespaceSchemaLocation\":" +
+                        "\"test.xsd\",\"swe262_xmlns:xsi\":\"http://www.w3.org/2001/" +
+                        "XMLSchema-instance\"}}";
+
+        JSONObject jsonObject = XML.toJSONObject(xmlStr);
+        String xmlToStr = XML.toString(jsonObject);
+
+        JSONObject finalJsonObject = XML.toJSONObject(new StringReader(xmlToStr), new addTransformer());
+        JSONObject expectedJsonObject = new JSONObject(expectedStr);
+
+        Util.compareActualVsExpectedJsonObjects(finalJsonObject, expectedJsonObject);
+    }
+
+    @Test
     public void shouldHandleKeypath() {
         String xmlStr =
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
