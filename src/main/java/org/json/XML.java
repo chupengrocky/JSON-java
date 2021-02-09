@@ -42,7 +42,12 @@ import java.util.Arrays;
  */
 @SuppressWarnings("boxing")
 public class XML {
-
+    /**
+     * The Custom Input type for TagName.
+     */
+    public interface UserType{
+        public String changeTag(String input);
+    }
     /**
      * The Character '&amp;'.
      */
@@ -629,8 +634,17 @@ public class XML {
         }
     }
 
-
-    private static boolean parseAddHelper(XMLTokener x, JSONObject context, String name, XMLParserConfiguration config, YOURTYPEHERE keyTransformer)
+    /**
+     * Scan the content following the named tag, attaching it to the context.
+     *
+     * @param x       The XMLTokener containing the source string.
+     * @param context The JSONObject that will include the new material.
+     * @param name    The tag name.
+     * @param keyTransformer    The user defined function for tag name replacement.
+     * @return true if the close tag is processed.
+     * @throws JSONException
+     */
+    private static boolean parseAddHelper(XMLTokener x, JSONObject context, String name, XMLParserConfiguration config, UserType keyTransformer)
             throws JSONException {
         char c;
         int i;
@@ -790,7 +804,7 @@ public class XML {
                         } else if (token == LT) {
                             // Nested element
                             if (parseAddHelper(x, jsonObject, tagName, config, keyTransformer)) {
-                                tagName = keyTransformer.run(tagName);
+                                tagName = keyTransformer.changeTag(tagName);
                                 if (jsonObject.length() == 0) {
                                     context.accumulate(tagName, "");
                                 } else if (jsonObject.length() == 1
@@ -1037,10 +1051,7 @@ public class XML {
         return jo;
     }
 
-    public interface YOURTYPEHERE{
-        public String run(String input);
-    }
-    public static JSONObject toJSONObject(Reader reader, YOURTYPEHERE keyTransformer){
+    public static JSONObject toJSONObject(Reader reader, UserType keyTransformer){
         XMLParserConfiguration config = XMLParserConfiguration.ORIGINAL;
         JSONObject jo = new JSONObject();
         XMLTokener x = new XMLTokener(reader);

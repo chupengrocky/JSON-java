@@ -416,9 +416,9 @@ public class XMLTest {
     @Test
     public void shouldHandleAddTagName() {
         String tagAdd = "swe262_";
-        class addTransformer implements XML.YOURTYPEHERE {
+        class addTransformer implements XML.UserType {
             @Override
-            public String run(String input){
+            public String changeTag(String input){
                 return tagAdd + input;
             }
         }

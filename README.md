@@ -1,14 +1,28 @@
+
+
 JSON in Java [package org.json]
 ===============================
+
 ## *This repo has been modified for MSWE262 Porject
+
 ## Modification
+
 ### MileStone2:
 
 
-1. Add Function toJSONObject(Reader reader, JSONPointer keypath)
-2. Add Function toJSONObject(Reader reader, JSONPointer path, JSONObject replacement)
-3. Add Test Case shouldHandleKeypathReplacer() and shouldHandleKeypath() 
+1. Add Function toJSONObject(Reader reader, JSONPointer keypath) (XML.java)
+2. Add Function toJSONObject(Reader reader, JSONPointer path, JSONObject replacement) (XML.java)
+3. Add Test Case shouldHandleKeypathReplacer() and shouldHandleKeypath() (XMLTest.java)
 
+
+
+### MileStone3:
+
+
+1. Add Interface UserType for the YOURTYPEHERE input (XML.java)
+2. Add Function JSONObject toJSONObject(Reader reader, UserType keyTransformer) (XML.java)
+3. Add the Function parseAddHelper(XMLTokener x, JSONObject context, String name, XMLParserConfiguration config, UserType keyTransformer) (XML.java)
+4. Add the TestFunction shouldHandleAddTagName() (XMLTest.java)
 
 [![Maven Central](https://img.shields.io/maven-central/v/org.json/json.svg)](https://mvnrepository.com/artifact/org.json/json)
 
@@ -21,6 +35,7 @@ JSON in Java [package org.json]
 The JSON-Java package is a reference implementation that demonstrates how to parse JSON documents into Java objects and how to generate new JSON documents from the Java classes.
 
 Project goals include:
+
 * Reliable and consistent results
 * Adherence to the JSON specification 
 * Easy to build, use, and include in other projects
@@ -42,20 +57,23 @@ Bug fixes, code improvements, and unit test coverage changes are welcome! Becaus
 # Build Instructions
 
 The org.json package can be built from the command line, Maven, and Gradle. The unit tests can be executed from Maven, Gradle, or individually in an IDE e.g. Eclipse.
- 
+
 **Building from the command line**
 
 *Build the class files from the package root directory src/main/java*
+
 ````
 javac org\json\*.java
 ````
 
 *Create the jar file in the current directory*
+
 ````
 jar cf json-java.jar org/json/*.class
 ````
 
 *Compile a program that uses the jar (see example code below)*
+
 ````
 javac -cp .;json-java.jar Test.java 
 ````
@@ -73,6 +91,7 @@ public class Test {
 ````
 
 *Execute the Test file*
+
 ```` 
 java -cp .;json-java.jar Test
 ````
@@ -83,10 +102,11 @@ java -cp .;json-java.jar Test
 {"abc":"def"}
 ````
 
- 
+
 **Tools to build the package and execute the unit tests**
 
 Execute the test suite with Maven:
+
 ```
 mvn clean test
 ```
@@ -124,6 +144,7 @@ invalid number formats (1.2e6.3) will cause errors as such documents can not be 
 reliably.
 
 Some notable exceptions that the JSON Parser in this library accepts are:
+
 * Unquoted keys `{ key: "value" }`
 * Unquoted values `{ "key": value }`
 * Unescaped literals like "tab" in string values `{ "key": "value   with an unescaped tab" }`
@@ -148,6 +169,7 @@ For structure consistency, it would be recommended that the above code is change
 to look like 1 of 2 ways.
 
 Option 1:
+
 ```Java
 SomeBean[] myArr = new SomeBean[]{ new SomeBean(1), new SomeBean(2) };
 JSONArray jArr = new JSONArray();
@@ -159,6 +181,7 @@ jArr.putAll(new SomeBean[]{ new SomeBean(3), new SomeBean(4) });
 ```
 
 Option 2:
+
 ```Java
 SomeBean[] myArr = new SomeBean[]{ new SomeBean(1), new SomeBean(2) };
 // these will be wrapped
@@ -174,14 +197,16 @@ Test filenames should consist of the name of the module being tested, with the s
 For example, <b>Cookie.java</b> is tested by <b>CookieTest.java</b>.
 
 <b>The fundamental issues with JSON-Java testing are:</b><br>
+
 * <b>JSONObjects</b> are unordered, making simple string comparison ineffective. 
 * Comparisons via **equals()** is not currently supported. Neither <b>JSONArray</b> nor <b>JSONObject</b> override <b>hashCode()</b> or <b>equals()</b>, so comparison defaults to the <b>Object</b> equals(), which is not useful.
 * Access to the <b>JSONArray</b> and <b>JSONObject</b> internal containers for comparison is not currently available.
 
 <b>General issues with unit testing are:</b><br>
+
 * Just writing tests to make coverage goals tends to result in poor tests. 
 * Unit tests are a form of documentation - how a given method works is demonstrated by the test. So for a code reviewer or future developer looking at code a good test helps explain how a function is supposed to work according to the original author. This can be difficult if you are not the original developer.
-*   It is difficult to evaluate unit tests in a vacuum. You also need to see the code being tested to understand if a test is good. 
+* It is difficult to evaluate unit tests in a vacuum. You also need to see the code being tested to understand if a test is good. 
 * Without unit tests, it is hard to feel confident about the quality of the code, especially when fixing bugs or refactoring. Good tests prevent regressions and keep the intent of the code correct.
 * If you have unit test results along with pull requests, the reviewer has an easier time understanding your code and determining if it works as intended.
 
