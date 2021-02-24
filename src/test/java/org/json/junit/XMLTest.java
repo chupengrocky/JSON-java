@@ -40,6 +40,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.json.*;
 import org.junit.Rule;
@@ -1172,4 +1173,41 @@ public class XMLTest {
         } catch (Exception ignored) {
         }
     }
+    @Test
+    public void MileStone4StreamTest() {
+        try {
+            InputStream xmlStream = null;
+            try {
+                xmlStream = XMLTest.class.getClassLoader().getResourceAsStream("Issue537.xml");
+                Reader xmlReader = new InputStreamReader(xmlStream);
+                JSONObject actual = XML.toJSONObject(xmlReader, true);
+                InputStream jsonStream = null;
+                try {
+                    jsonStream = XMLTest.class.getClassLoader().getResourceAsStream("Issue537.json");
+                    final JSONObject expected = new JSONObject(new JSONTokener(jsonStream));
+                    expected.tostream().filter(o->o.has("state")).forEach(o->System.out.println(o));
+                    String filteredOutput = "{zip=10016, country=United States, city=New York, _nodePath=/clinical_study/location/facility/address/, state=New York}";
+
+
+                    Util.compareActualVsExpectedJsonObjects(actual, expected);
+                    //this will test the stream function defined in the JSONNode
+                    assertEquals(expected.tostream().filter(o->o.has("state")).map(o->o.toString()).collect(Collectors.joining()),filteredOutput);
+
+                } finally {
+                    if (jsonStream != null) {
+                        jsonStream.close();
+                    }
+                }
+            } finally {
+                if (xmlStream != null) {
+                    xmlStream.close();
+                }
+            }
+        } catch (IOException e) {
+            fail("file writer error: " + e.getMessage());
+        }
+    }
+
+
+
 }

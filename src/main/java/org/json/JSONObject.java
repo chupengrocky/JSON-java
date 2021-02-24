@@ -36,16 +36,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.ResourceBundle;
-import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 /**
  * A JSONObject is an unordered collection of name/value pairs. Its external
@@ -2611,6 +2605,50 @@ public class JSONObject {
             results.put(entry.getKey(), value);
         }
         return results;
+    }
+
+    public static final class JSONNode {
+        Map<String,Object> content = new HashMap<>();
+        public void addpair(String key, Object val) {
+            content.put(key,val);
+        }
+        public void addpath(Object path){
+            content.put("_nodePath", path);
+        }
+        public boolean has(String key){
+            return content.containsKey(key);
+        }
+
+        public Object get(String key){
+            return content.get(key);
+        }
+
+        @Override
+        public String toString() {
+            return content.toString();
+        }
+    }
+    public void toList( List<JSONNode> result, Set<Map.Entry<String, Object>> entrySet, String path) {
+        JSONNode node = new JSONNode();
+        for (Entry<String, Object> entry : entrySet) {
+            Object value;
+            if (entry.getValue() == null || entry.getKey() == null ||NULL.equals(entry.getValue())) {
+                value = null;
+            } else if (entry.getValue() instanceof JSONObject) {
+                this.toList(result,((JSONObject) entry.getValue()).entrySet(), path+entry.getKey()+'/');
+            } else {
+                value = entry.getValue();
+                node.addpair(entry.getKey(),entry.getValue());
+            }
+        }
+        node.addpath(path);
+        result.add(node);
+    }
+
+    public Stream<JSONNode> tostream() {
+        List<JSONNode> result = new ArrayList<>();
+        this.toList(result, this.entrySet(), "/");
+        return result.stream();
     }
     
     /**
