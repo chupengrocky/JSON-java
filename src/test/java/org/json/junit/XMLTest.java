@@ -40,6 +40,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import org.json.*;
@@ -1206,6 +1207,49 @@ public class XMLTest {
         } catch (IOException e) {
             fail("file writer error: " + e.getMessage());
         }
+    }
+
+
+    @Test
+    public void MileStone5FutureTest() throws Exception{
+        String xmlStr =
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                        "<addresses xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"" +
+                        "   xsi:noNamespaceSchemaLocation='test.xsd'>\n" +
+                        "   <address>\n" +
+                        "       <name>Joe Tester</name>\n" +
+                        "       <street>[CDATA[Baker street 5]</street>\n" +
+                        "       <NothingHere/>\n" +
+                        "       <TrueValue>true</TrueValue>\n" +
+                        "       <FalseValue>false</FalseValue>\n" +
+                        "       <NullValue>null</NullValue>\n" +
+                        "       <PositiveValue>42</PositiveValue>\n" +
+                        "       <NegativeValue>-23</NegativeValue>\n" +
+                        "       <DoubleValue>-23.45</DoubleValue>\n" +
+                        "       <Nan>-23x.45</Nan>\n" +
+                        "       <ArrayOfNum>1, 2, 3, 4.1, 5.2</ArrayOfNum>\n" +
+                        "   </address>\n" +
+                        "</addresses>";
+
+        String expectedStr =
+                "{\"addresses\":{\"address\":{\"street\":\"[CDATA[Baker street 5]\"," +
+                        "\"name\":\"Joe Tester\",\"NothingHere\":\"\",TrueValue:true,\n" +
+                        "\"FalseValue\":false,\"NullValue\":null,\"PositiveValue\":42,\n" +
+                        "\"NegativeValue\":-23,\"DoubleValue\":-23.45,\"Nan\":-23x.45,\n" +
+                        "\"ArrayOfNum\":\"1, 2, 3, 4.1, 5.2\"\n" +
+                        "},\"xsi:noNamespaceSchemaLocation\":" +
+                        "\"test.xsd\",\"xmlns:xsi\":\"http://www.w3.org/2001/" +
+                        "XMLSchema-instance\"}}";
+
+        JSONObject expectedJsonObject = new JSONObject(expectedStr);
+        Reader reader = new StringReader(xmlStr);
+        Future<JSONObject> jsonObjectFuture = XML.toJSONObjectFuture(reader);
+        while(!jsonObjectFuture.isDone()) {
+            System.out.println("Transfering File... Wait.");
+            Thread.sleep(100);
+        }
+        JSONObject jsonObject = jsonObjectFuture.get();
+        Util.compareActualVsExpectedJsonObjects(jsonObject, expectedJsonObject);
     }
 
 

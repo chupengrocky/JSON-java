@@ -31,6 +31,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.Arrays;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 
 /**
@@ -1205,8 +1208,41 @@ public class XML {
      * @return A JSONObject containing the structured data from the XML string.
      * @throws JSONException Thrown if there is an errors while parsing the string
      */
+
     public static JSONObject toJSONObject(String string, XMLParserConfiguration config) throws JSONException {
         return toJSONObject(new StringReader(string), config);
+    }
+
+    /**
+     * This is the class to support mileStone 5 asynchronous calls
+     */
+    static class largeFileExecutor {
+        public Future<JSONObject> call(Reader reader) {
+            ExecutorService executor
+                    = Executors.newSingleThreadExecutor();
+            return executor.submit(() -> {
+                Thread.sleep(100);
+                return toJSONObject(reader);
+            });
+        }
+    }
+
+    /**
+     * This method return a Future type object which can be used
+     * to accessed the data by call get() after the thread is done
+     *
+     * @param reader the source reader
+     * @return
+     */
+    public static Future<JSONObject> toJSONObjectFuture (Reader reader) throws Exception{
+        Future<JSONObject> future;
+        try {
+            future =  new largeFileExecutor().call(reader);
+            return future;
+        } catch (Exception e){
+            System.out.println(e);
+            return null;
+        }
     }
 
     /**
