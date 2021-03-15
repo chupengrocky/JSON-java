@@ -414,11 +414,11 @@ public class XMLTest {
         Util.compareActualVsExpectedJsonObjects(jsonObject, expectedJsonObject);
         Util.compareActualVsExpectedJsonObjects(finalJsonObject, expectedJsonObject);
     }
-
+    //MileStone 3 Test Cases
     @Test
     public void shouldHandleAddTagName() {
         String tagAdd = "swe262_";
-        class addTransformer implements XML.UserType {
+        class addTransformer implements XML.UserType{
             @Override
             public String changeTag(String input){
                 return tagAdd + input;
@@ -453,6 +453,7 @@ public class XMLTest {
         Util.compareActualVsExpectedJsonObjects(finalJsonObject, expectedJsonObject);
     }
 
+    //MileStone 2 Test Cases
     @Test
     public void shouldHandleKeypath() {
         String xmlStr =
@@ -476,6 +477,7 @@ public class XMLTest {
         compareReaderToJSONObject_Keypath(xmlStr, expectedStr, keypath);
     }
 
+    //MileStone 2 Test Cases
     @Test
     public void shouldHandleKeypathReplacer() {
         String xmlStr =
@@ -1174,6 +1176,7 @@ public class XMLTest {
         } catch (Exception ignored) {
         }
     }
+    // MileStone 4 Test cases
     @Test
     public void MileStone4StreamTest() {
         try {
@@ -1209,7 +1212,7 @@ public class XMLTest {
         }
     }
 
-
+    // MileStone 5 Test Case
     @Test
     public void MileStone5FutureTest() throws Exception{
         String xmlStr =

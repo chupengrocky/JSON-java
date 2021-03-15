@@ -1084,20 +1084,20 @@ public class XML {
         return jo;
     }
 
-    public static JSONObject toJSONObject(Reader reader, JSONPointer path) throws JSONException {
-        JSONObject res = toJSONObjectHelper(reader, XMLParserConfiguration.ORIGINAL, path);
-        String result = res.query(path).toString();
-        System.out.println("File contains the Keypath: " + path.toString());
-        return new JSONObject(result);
-    }
-
-    // Original Implementation
-//    public static JSONObject toJSONObject(Reader reader, JSONPointer keypath) throws JSONException {
-//        JSONObject res = toJSONObject(reader);
-//        String result = res.query(keypath).toString();
-//        System.out.println("File contains the Keypath: " + keypath.toString());
+//    public static JSONObject toJSONObject(Reader reader, JSONPointer path) throws JSONException {
+//        JSONObject res = toJSONObjectHelper(reader, XMLParserConfiguration.ORIGINAL, path);
+//        String result = res.query(path).toString();
+//        System.out.println("File contains the Keypath: " + path.toString());
 //        return new JSONObject(result);
 //    }
+
+//     Original Implementation
+    public static JSONObject toJSONObject(Reader reader, JSONPointer keypath) throws JSONException {
+        JSONObject res = toJSONObject(reader);
+        String result = res.query(keypath).toString();
+        System.out.println("File contains the Keypath: " + keypath.toString());
+        return new JSONObject(result);
+    }
 
     public static JSONObject toJSONObject(Reader reader, JSONPointer path, JSONObject replacement) throws JSONException {
         JSONObject originalJSON = toJSONObject(reader);
@@ -1244,6 +1244,34 @@ public class XML {
             return null;
         }
     }
+
+    /**
+     * Convert a JSONOnject into a well-formed, element-normal XML string.
+     * Using Synchronized method and Future class
+     * Useful when parse large xml file
+     *
+     * @param reader
+     */
+
+    public class SquareCalculator {
+
+        private ExecutorService executor
+                = Executors.newSingleThreadExecutor();
+
+        public Future<JSONObject> calculate(Reader reader) {
+
+            return executor.submit(() -> {
+//                try {
+//                    Thread.sleep(1000);
+                    return toJSONObject(reader, XMLParserConfiguration.ORIGINAL);
+//                } catch (Exception e){
+//                    System.out.println(e);
+//                }
+            });
+        }
+    }
+//    public static void toJSONbjectFuture (Reader reader){
+//    }
 
     /**
      * Convert a JSONObject into a well-formed, element-normal XML string.
